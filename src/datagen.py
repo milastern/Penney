@@ -23,10 +23,10 @@ class decking:
         self.storage_dir (str): Path where files are saved.
     """
         
-    def gen_store_decks_seeds(self, 
-                              n_decks: int, 
-                              half_deck_size: int = HALF_DECK_SIZE 
-                             ) -> tuple[np.ndarray, np.ndarray, int]:
+    def gen_decks(self, 
+                n_decks: int, 
+                half_deck_size: int = HALF_DECK_SIZE 
+                ) : #-> tuple[np.ndarray, np.ndarray, int]
         """
     Generates and stores decks of cards along with their seeds.
 
@@ -64,5 +64,5 @@ class decking:
         return decks, seeds, the_next
     
 
-gen_cards = decking(9903)
-gen_cards.gen_store_decks_seeds(N_DECKS)
+#gen_cards = decking(9903)
+#gen_cards.gen_decks(N_DECKS)
