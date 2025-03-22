@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd 
 import numpy as np
 from src.processing import processing
+import os
+
 
 
 def make_graph_tricks(result_dict: dict):
@@ -12,8 +14,8 @@ def make_graph_tricks(result_dict: dict):
     Returns:
         heatmap figure
     """
-    color_p1 = [ "BBB", "BBR", "BRB", "RBB", "BRR", "RRB", "RBR", "RRR"]
-    color_p2 = [ "BBB", "BBR", "BRB", "RBB", "BRR", "RRB", "RBR", "RRR"]
+    color_p1 = ["BBB", "BBR", "BRB", "BRR", "RBB", "RBR", "RRB", "RRR"]
+    color_p2 = ["BBB", "BBR", "BRB", "BRR", "RBB", "RBR", "RRB", "RRR"]
     df = pd.DataFrame([{'i': key[0], 'k': key[1], 'value': value} for key, value in result_dict.items()])
     df['value'] = df['value'].apply(lambda x: x if isinstance(x, list) else [0, 0, 0]) 
     df_pivot = df.pivot(index='k', columns='i', values='value')
@@ -44,8 +46,8 @@ def make_graph_cards(result_dict: dict):
     Returns:
         heatmap figure
     """
-    color_p1 = [ "BBB", "BBR", "BRB", "RBB", "BRR", "RRB", "RBR", "RRR"]
-    color_p2 = [ "BBB", "BBR", "BRB", "RBB", "BRR", "RRB", "RBR", "RRR"]
+    color_p1 = ["BBB", "BBR", "BRB", "BRR", "RBB", "RBR", "RRB", "RRR"]
+    color_p2 = ["BBB", "BBR", "BRB", "BRR", "RBB", "RBR", "RRB", "RRR"]
     df = pd.DataFrame([{'i': key[0], 'k': key[1], 'value': value} for key, value in result_dict.items()])
     df['value'] = df['value'].apply(lambda x: x if isinstance(x, list) else [0, 0, 0]) 
     df_pivot = df.pivot(index='k', columns='i', values='value')

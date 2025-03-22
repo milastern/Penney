@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import os 
 import json
+from src.helpers import debugger_factory
 
 from src.datagen import DECK_SIZE
 class processing:
@@ -67,7 +68,7 @@ class processing:
             standings[5] += 1 
         return standings  
 
-
+    @debugger_factory(show_args=False)
     def simulations(self) -> dict:
         """
         Runs simulations for all unique player choice combinations across stored decks.
@@ -89,8 +90,8 @@ class processing:
         if len(ready_decks) > self.decks_prosessed:
             new_decks = len(ready_decks)- self.decks_prosessed 
             ready_decks = ready_decks[-new_decks:]
-        player1 = [[0,0,0], [0,0,1], [0,1,0], [1,0,0], [0,1,1], [1,1,0], [1,0,1], [1,1,1]]
-        player2 = [[0,0,0], [0,0,1], [0,1,0], [1,0,0], [0,1,1], [1,1,0], [1,0,1], [1,1,1]]
+        player1 = [[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]]
+        player2 = [[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]]
         for i in range(len(player1)):
             pick1 = player1[i]
             for k in range(len(player2)):
@@ -106,8 +107,9 @@ class processing:
         return  
 
     def get_percents(self, tricks: bool = True):
-        player1 = [[0,0,0], [0,0,1], [0,1,0], [1,0,0], [0,1,1], [1,1,0], [1,0,1], [1,1,1]]
-        player2 = [[0,0,0], [0,0,1], [0,1,0], [1,0,0], [0,1,1], [1,1,0], [1,0,1], [1,1,1]]
+        percentages = {}
+        player1 = [[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]]
+        player2 = [[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]]
         if tricks == True: 
             for i in range(len(player1)):
                 pick1 = player1[i]
