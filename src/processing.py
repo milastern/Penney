@@ -56,16 +56,12 @@ class processing:
                 
         if tricks1 < tricks2: 
             standings[0] += 1 
-        if tricks1 > tricks2: 
-            standings[1] += 1 
         if tricks1 == tricks2: 
-            standings[2] += 1   
+            standings[1] += 1   
         if cards1 < cards2: 
-            standings[3] += 1
-        if cards1 > cards2: 
-            standings[4] += 1 
+            standings[2] += 1
         if cards1 == cards2: 
-            standings[5] += 1 
+            standings[3] += 1 
         return standings  
 
     @debugger_factory(show_args=False)
@@ -98,11 +94,11 @@ class processing:
                 pick2 = player2[k]
                 if pick1 == pick2: 
                     continue 
-                standings = [0,0,0,0,0,0] 
+                standings = [0,0,0,0] 
                 for n in range(len(ready_decks)):
                     standings = self.play_penney(pick1, pick2, ready_decks[n], standings)
-                self.results_by_tricks[(i,k)] = [standings[0], standings[1], standings[2]] 
-                self.results_by_cards[(i,k)] = [standings[3], standings[4], standings[5]] 
+                self.results_by_tricks[(i,k)] = [standings[0], standings[1]] 
+                self.results_by_cards[(i,k)] = [ standings[2], standings[3]] 
         self.decks_prosessed += len(ready_decks)
         return  
 
@@ -117,9 +113,8 @@ class processing:
                     pick2 = player2[k]
                     if pick1 == pick2: 
                         continue 
-                    percentages[(i,k)] =[self.results_by_tricks[(i,k)][0]/self.decks_prosessed,
-                                        self.results_by_tricks[(i,k)][1]/self.decks_prosessed,
-                                        self.results_by_tricks[(i,k)][2]/self.decks_prosessed]
+                    percentages[(i,k)] =[(self.results_by_tricks[(i,k)][0]/self.decks_prosessed)*100,
+                                        (self.results_by_tricks[(i,k)][1]/self.decks_prosessed)*100]
         elif tricks == False: 
             for i in range(len(player1)):
                 pick1 = player1[i]
@@ -127,9 +122,12 @@ class processing:
                     pick2 = player2[k]
                     if pick1 == pick2: 
                         continue 
-                    percentages[(i,k)] =[self.results_by_cards[(i,k)][0]/self.decks_prosessed,
-                                        self.results_by_cards[(i,k)][1]/self.decks_prosessed,
-                                        self.results_by_cards[(i,k)][2]/self.decks_prosessed]
+                    percentages[(i,k)] =[(self.results_by_cards[(i,k)][0]/self.decks_prosessed)*100,
+                                        (self.results_by_cards[(i,k)][1]/self.decks_prosessed)*100]
         return percentages
+    
+    def get_decks(self):
+        decks = self.decks_prosessed
+        return decks 
 
 

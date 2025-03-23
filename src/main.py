@@ -23,15 +23,18 @@ def main():
             do_it.simulations()
             if scoring == 1: 
                 cards = do_it.get_percents(tricks = False)
-                graph = make_graph_cards(cards)
+                decks = do_it.get_decks()
+                graph = make_graph_cards(cards, decks)
             elif scoring == 2:
                 tricks = do_it.get_percents()
-                graph = make_graph_tricks(tricks)
+                decks = do_it.get_decks()
+                graph = make_graph_tricks(tricks, decks)
             elif scoring == 3:
                 tricks = do_it.get_percents()
                 cards = do_it.get_percents(tricks = False)
-                graph1= make_graph_cards(cards)
-                graph2= make_graph_tricks(tricks)
+                decks = do_it.get_decks()
+                graph1= make_graph_cards(cards, decks)
+                graph2= make_graph_tricks(tricks, decks)
             else: 
                 choice = input("Press 0 to exit the program  ")   
                 if int(choice) == 0: 
