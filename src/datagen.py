@@ -10,6 +10,7 @@ class decking:
     
     def __init__(self, seed: int):
         self.seed = seed
+        self.rng=np.random.default_rng(self.seed)
         self.rounds = 0 
         self.storage_dir = os.path.join(os.getcwd(), "files")  # Store files in "files/"
         # Ensure the "files" folder exists
@@ -39,10 +40,9 @@ class decking:
     """
         init_deck = [0]*half_deck_size + [1]*half_deck_size
         decks = np.tile(init_deck, (n_decks, 1))
-        rng = np.random.default_rng(self.seed)
-        rng.permuted(decks, axis=1, out=decks)
-        seeds = np.array(range(self.seed, self.seed+n_decks+1))
-        self.seed = self.seed+n_decks+1
+        self.rng.permuted(decks, axis=1, out=decks)
+        #seeds = np.array(range(self.seed, self.seed+n_decks+1))
+        #self.seed = self.seed+n_decks+1
         # Check if stuff.npy exists, and append data if so
         deck_storage_path = os.path.join(self.storage_dir, "deck_storage.npy")
         state_file_path = os.path.join(self.storage_dir, "state.json")
@@ -56,12 +56,19 @@ class decking:
         
         np.save(deck_storage_path, decks)  # Save updated decks
         
-        state = rng.bit_generator.state
+        state = self.rng.bit_generator.state
         with open(state_file_path, 'w') as f:
             json.dump(state, f)
-        the_next = self.seed
+        #the_next = self.seed
         self.rounds += 1
-        return decks, seeds, the_next
+        return decks #, seeds, the_next
+   
+    def reload(self): 
+        self.rounds = 1
+        state_file_path = os.path.join(self.storage_dir, "state.json")
+        with open(state_file_path, 'r') as f:
+            state = json.load(f)
+        self.rng.bit_generator.state = state 
     
 
 #gen_cards = decking(9903)

@@ -7,7 +7,7 @@ import os
 
 
 
-def make_graph_tricks(result_dict: dict,
+def make_graph_tricks(result_arr: dict,
                       num_decks: int):
     """
     Generates a heatmap visualizing Player 2’s win percentage using tricks as the scoring method.
@@ -18,11 +18,8 @@ def make_graph_tricks(result_dict: dict,
     color_p1 = ["BBB", "BBR", "BRB", "BRR", "RBB", "RBR", "RRB", "RRR"]
     color_p2 = ["BBB", "BBR", "BRB", "BRR", "RBB", "RBR", "RRB", "RRR"]
     num_decks = num_decks
-    df = pd.DataFrame([{'i': key[0], 'k': key[1], 'value': value} for key, value in result_dict.items()])
-    df['value'] = df['value'].apply(lambda x: x if isinstance(x, list) else [0, 0, 0]) 
-    df_pivot = df.pivot(index='k', columns='i', values='value')
-    win_matrix = df_pivot.applymap(lambda x: x[0] if isinstance(x, list) else 0).to_numpy().T
-    draw_matrix = df_pivot.applymap(lambda x: x[1] if isinstance(x, list) else 0).to_numpy().T
+    win_matrix = result_arr[:, :, 0]  # Extract win counts
+    draw_matrix = result_arr[:, :, 1] # extract draw counts
     labels = np.array([[f"{round(win)}\n({round(draw)})" for win, draw in zip(win_row, draw_row)] 
                     for win_row, draw_row in zip(win_matrix, draw_matrix)])
     plt.figure(figsize=(8, 6))
@@ -41,7 +38,7 @@ def make_graph_tricks(result_dict: dict,
     return figure 
 
 
-def make_graph_cards(result_dict: dict,
+def make_graph_cards(result_arr: dict,
                      num_decks: int):
     """
     Generates a heatmap visualizing Player 2’s win percentage using cards as the scoring method.
@@ -52,11 +49,8 @@ def make_graph_cards(result_dict: dict,
     color_p1 = ["BBB", "BBR", "BRB", "BRR", "RBB", "RBR", "RRB", "RRR"]
     color_p2 = ["BBB", "BBR", "BRB", "BRR", "RBB", "RBR", "RRB", "RRR"]
     num_decks = num_decks
-    df = pd.DataFrame([{'i': key[0], 'k': key[1], 'value': value} for key, value in result_dict.items()])
-    df['value'] = df['value'].apply(lambda x: x if isinstance(x, list) else [0, 0, 0]) 
-    df_pivot = df.pivot(index='k', columns='i', values='value')
-    win_matrix = df_pivot.applymap(lambda x: x[0] if isinstance(x, list) else 0).to_numpy().T
-    draw_matrix = df_pivot.applymap(lambda x: x[1] if isinstance(x, list) else 0).to_numpy().T
+    win_matrix = result_arr[:, :, 0]  # Extract win counts
+    draw_matrix = result_arr[:, :, 1] # extract draw counts
     labels = np.array([[f"{round(win)}\n({round(draw)})" for win, draw in zip(win_row, draw_row)] 
                     for win_row, draw_row in zip(win_matrix, draw_matrix)])
     plt.figure(figsize=(8, 6))

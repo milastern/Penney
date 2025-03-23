@@ -8,8 +8,8 @@ from src.datagen import DECK_SIZE
 class processing:
     def __init__(self):
         self.decks_prosessed = 0 
-        self.results_by_cards = {}
-        self.results_by_tricks = {} 
+        self.results_by_cards =  np.zeros((8, 8, 2), dtype=int)
+        self.results_by_tricks =  np.zeros((8, 8, 2), dtype=int)
 
     def play_penney(self,
                     pick1: np.ndarray,
@@ -30,37 +30,29 @@ class processing:
         Returns:
             list: Updated standings [wins, losses, draws].
         """
-        cards_used = 0 
-        tricks1 = 0
-        tricks2 = 0
-        cards1 = 0
-        cards2 = 0 
-        curr = 0 
-        while curr <= (DECK_SIZE-1): 
+        last_win, tricks1, tricks2, cards1, cards2, curr = 0, 0, 0, 0, 0, 0  
+        while curr <= (DECK_SIZE-3): 
             top_of_deck = deck[curr: curr+3] 
-            if len(top_of_deck) < 3:
-                curr += 1 
-                continue
             if np.array_equal(top_of_deck, pick1): 
                 tricks1 += 1
-                cards1 = cards1 + (curr - cards_used + 3)
-                cards_used = curr + 3 
-                curr = curr +3 
+                cards1 += (curr - last_win + 3)
+                last_win = curr + 3 
+                curr += 3
             elif np.array_equal(top_of_deck, pick2):
                 tricks2 += 1
-                cards2 = cards2 + (curr - cards_used + 3)
-                cards_used = curr +3 
-                curr = curr+3 
+                cards2 += curr - last_win + 3
+                last_win = curr +3 
+                curr += 3
             else: 
                 curr += 1
                 
         if tricks1 < tricks2: 
             standings[0] += 1 
-        if tricks1 == tricks2: 
+        elif tricks1 == tricks2: 
             standings[1] += 1   
         if cards1 < cards2: 
             standings[2] += 1
-        if cards1 == cards2: 
+        elif cards1 == cards2: 
             standings[3] += 1 
         return standings  
 
@@ -76,13 +68,11 @@ class processing:
             dict: Dictionary mapping player choices to their game outcome percentages.
         """
         
-        file_path = os.path.join("files", "deck_storage.npy")  # Update the file path  
+        file_path = os.path.join("files", "deck_storage.npy")
 
         if not os.path.exists(file_path):  
             raise FileNotFoundError(f"File not found: {file_path}")  
-
         ready_decks = np.load(file_path)  
-        #ready_decks = np.load('deck_storage.npy')
         if len(ready_decks) > self.decks_prosessed:
             new_decks = len(ready_decks)- self.decks_prosessed 
             ready_decks = ready_decks[-new_decks:]
@@ -97,37 +87,51 @@ class processing:
                 standings = [0,0,0,0] 
                 for n in range(len(ready_decks)):
                     standings = self.play_penney(pick1, pick2, ready_decks[n], standings)
-                self.results_by_tricks[(i,k)] = [standings[0], standings[1]] 
-                self.results_by_cards[(i,k)] = [ standings[2], standings[3]] 
+                self.results_by_tricks[i,k,0] = standings[0]
+                self.results_by_tricks[i,k,1] = standings[1]
+                self.results_by_cards[i,k, 0] = standings[2]
+                self.results_by_cards[i,k, 1] = standings[3] 
         self.decks_prosessed += len(ready_decks)
         return  
 
     def get_percents(self, tricks: bool = True):
-        percentages = {}
-        player1 = [[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]]
-        player2 = [[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]]
+        percentages = np.zeros((8, 8, 2), dtype=float)
         if tricks == True: 
-            for i in range(len(player1)):
-                pick1 = player1[i]
-                for k in range(len(player2)):
-                    pick2 = player2[k]
-                    if pick1 == pick2: 
+            for i in range(8):
+                for k in range(8):
+                    if i == k: 
                         continue 
-                    percentages[(i,k)] =[(self.results_by_tricks[(i,k)][0]/self.decks_prosessed)*100,
-                                        (self.results_by_tricks[(i,k)][1]/self.decks_prosessed)*100]
+                    percentages[i,k,0] =(self.results_by_tricks[i,k,0]/self.decks_prosessed)*100
+                    percentages[i,k,1] = (self.results_by_tricks[i,k,1]/self.decks_prosessed)*100
         elif tricks == False: 
-            for i in range(len(player1)):
-                pick1 = player1[i]
-                for k in range(len(player2)):
-                    pick2 = player2[k]
-                    if pick1 == pick2: 
+            for i in range(8):
+                for k in range(8):
+                    if i == k: 
                         continue 
-                    percentages[(i,k)] =[(self.results_by_cards[(i,k)][0]/self.decks_prosessed)*100,
-                                        (self.results_by_cards[(i,k)][1]/self.decks_prosessed)*100]
+                    percentages[i,k,0] =(self.results_by_cards[i,k,0]/self.decks_prosessed)*100
+                    percentages[i,k,1] = (self.results_by_cards[i,k,1]/self.decks_prosessed)*100
         return percentages
     
     def get_decks(self):
         decks = self.decks_prosessed
         return decks 
-
+    
+    def load_past_data(self):
+        cards = np.load("files/results_cards.npy")
+        tricks = np.load("files/results_tricks.npy")
+        n_decks = np.load("files/n_decks_processed.npy")
+        self.decks_prosessed = n_decks 
+        self.results_by_cards = cards
+        self.results_by_tricks = tricks
+        return
+    
+    def save_simulations(self):
+        folder_path = 'files'
+        tricks_file = os.path.join(folder_path, "results_tricks.npy")
+        cards_file = os.path.join(folder_path, "results_cards.npy")
+        n_decks_file = os.path.join(folder_path, "n_decks_processed.npy")
+        np.save(tricks_file, self.results_by_tricks)
+        np.save(cards_file, self.results_by_cards)
+        np.save(n_decks_file, self.decks_prosessed)
+        return
 
