@@ -33,12 +33,12 @@ class processing:
         last_win, tricks1, tricks2, cards1, cards2, curr = 0, 0, 0, 0, 0, 0  
         while curr <= (DECK_SIZE-3): 
             top_of_deck = deck[curr: curr+3] 
-            if np.array_equal(top_of_deck, pick1): 
+            if np.all(top_of_deck == pick1): 
                 tricks1 += 1
                 cards1 += (curr - last_win + 3)
                 last_win = curr + 3 
                 curr += 3
-            elif np.array_equal(top_of_deck, pick2):
+            elif np.all(top_of_deck == pick2):
                 tricks2 += 1
                 cards2 += curr - last_win + 3
                 last_win = curr +3 
@@ -69,28 +69,24 @@ class processing:
         """
         
         file_path = os.path.join("files", "deck_storage.npy")
-
-        if not os.path.exists(file_path):  
-            raise FileNotFoundError(f"File not found: {file_path}")  
         ready_decks = np.load(file_path)  
         if len(ready_decks) > self.decks_prosessed:
             new_decks = len(ready_decks)- self.decks_prosessed 
             ready_decks = ready_decks[-new_decks:]
-        player1 = [[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]]
-        player2 = [[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]]
-        for i in range(len(player1)):
-            pick1 = player1[i]
-            for k in range(len(player2)):
-                pick2 = player2[k]
-                if pick1 == pick2: 
+        choices = np.array([[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]])
+        for i in range(8):
+            pick1 = choices[i]
+            for k in range(8):
+                pick2 = choices[k]
+                if i == k: 
                     continue 
                 standings = [0,0,0,0] 
-                for n in range(len(ready_decks)):
-                    standings = self.play_penney(pick1, pick2, ready_decks[n], standings)
-                self.results_by_tricks[i,k,0] = standings[0]
-                self.results_by_tricks[i,k,1] = standings[1]
-                self.results_by_cards[i,k, 0] = standings[2]
-                self.results_by_cards[i,k, 1] = standings[3] 
+                for deck in ready_decks:
+                    standings = self.play_penney(pick1, pick2, deck, standings)
+                self.results_by_tricks[i,k,0] += standings[0]
+                self.results_by_tricks[i,k,1] += standings[1]
+                self.results_by_cards[i,k, 0] += standings[2]
+                self.results_by_cards[i,k, 1] += standings[3] 
         self.decks_prosessed += len(ready_decks)
         return  
 

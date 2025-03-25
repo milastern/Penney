@@ -13,7 +13,8 @@ def main():
     new = input("Would you like to load saved data? yes(1) or no(2)?  ")
     if int(new) == 1:
         do_it.load_past_data()
-        gen_cards.reload()
+        past = do_it.get_decks()
+        gen_cards.reload(past)
     while running == True: 
         n_decks = do_it.get_decks()
         print(f"You currently have {n_decks} processed decks.")
@@ -50,18 +51,23 @@ def main():
             if int(choice) == 0: 
                 running = False
                 continue
-    more = input("Would you like to generate final graphs (0) or continue (1)?  ")
-    if int(more) == 0: 
+    more = input("Would you like to generate final graphs (1) or skip (0)?  ")
+    if int(more) == 1: 
         tricks = do_it.get_percents()
         cards = do_it.get_percents(tricks = False)
         decks = do_it.get_decks()
         graph1= make_graph_cards(cards, decks)
         graph2= make_graph_tricks(tricks, decks)
 
-    save = input("Would you like to save your data (0) or exit without saving (1)?  ")
-    if int(save) == 0:
+    save = input("Would you like to save your data (1) or exit without saving (0)?  ")
+    if int(save) == 1:
         do_it.save_simulations()
         print("Data Saved")
+    if int(save) == 0:
+        decks_path = os.path.join("files", "deck_storage.npy")
+        os.remove(decks_path)
+        state_path = os.path.join("files", "state.json")
+        os.remove(state_path)
     print("Goodbye.")
             
 if __name__ == "__main__":

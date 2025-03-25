@@ -8,7 +8,7 @@ N_DECKS = 250000
 
 class decking: 
     
-    def __init__(self, seed: int):
+    def __init__(self, seed: int = 9903):
         self.seed = seed
         self.rng=np.random.default_rng(self.seed)
         self.rounds = 0 
