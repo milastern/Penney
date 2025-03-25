@@ -14,7 +14,7 @@ def main():
     if int(new) == 1:
         do_it.load_past_data()
         past = do_it.get_decks()
-        gen_cards.reload(past)
+        gen_cards.gen_decks(past)
     while running == True: 
         n_decks = do_it.get_decks()
         print(f"You currently have {n_decks} processed decks.")
@@ -63,11 +63,6 @@ def main():
     if int(save) == 1:
         do_it.save_simulations()
         print("Data Saved")
-    if int(save) == 0:
-        decks_path = os.path.join("files", "deck_storage.npy")
-        os.remove(decks_path)
-        state_path = os.path.join("files", "state.json")
-        os.remove(state_path)
     print("Goodbye.")
             
 if __name__ == "__main__":

@@ -63,12 +63,12 @@ class decking:
         self.rounds += 1
         return decks #, seeds, the_next
    
-    def reload(self): 
-        self.rounds = 1
-        state_file_path = os.path.join(self.storage_dir, "state.json")
-        with open(state_file_path, 'r') as f:
-            state = json.load(f)
-        self.rng.bit_generator.state = state 
+    # def reload(self): 
+    #     self.rounds = 1
+    #     state_file_path = os.path.join(self.storage_dir, "state.json")
+    #     with open(state_file_path, 'r') as f:
+    #         state = json.load(f)
+    #     self.rng.bit_generator.state = state
     
 
 #gen_cards = decking(9903)
